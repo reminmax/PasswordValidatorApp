@@ -13,7 +13,7 @@ namespace PasswordValidatorAppTests.Domain.StringsParser
     [TestClass]
     public class StringParserTests
     {
-        private readonly StringParser stringParser = new StringParser(Constants.VALIDATION_PATTERN);
+        private readonly StringParser stringParser = new StringParser(Constants.VALIDATION_PATTERN, Constants.SPLIT_PATTERN);
 
         [TestMethod]
         public void IsStringMatchesPattern_ReturnsTrue_ForValidString()
