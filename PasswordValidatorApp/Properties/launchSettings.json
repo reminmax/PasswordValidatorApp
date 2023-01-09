@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PasswordValidatorApp": {
+      "commandName": "Project",
+      "commandLineArgs": "validate --f c:\\tmp\\psw.txt"
+    }
+  }
+}
