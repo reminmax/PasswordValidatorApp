@@ -68,6 +68,9 @@ namespace PasswordValidatorApp
             Console.WriteLine("Validation process finished.");
 
             ShowValidationResult(result);
+
+            Console.WriteLine("Press any key to close");
+            Console.ReadKey();
         }
 
         private static void ShowValidationResult(ValidationResult result)
