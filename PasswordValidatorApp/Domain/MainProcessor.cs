@@ -28,7 +28,32 @@ namespace PasswordValidatorApp.Domain
 
         public async Task<ValidationResult> GetValidationResult()
         {
-            throw new NotImplementedException();
+            var result = new ValidationResult();
+
+            var stringCollection = await _repository.GetDataForValidation();
+            if (!stringCollection.Any())
+            {
+                result.AddError("Specified file is empty. There is nothing to validate.");
+                return result;
+            }
+
+            foreach (var line in stringCollection)
+            {
+                if (!_stringParser.IsStringMatchesPattern(line))
+                {
+                    result.AddError($"The string <{line}> is invalid and will not be validated.");
+                    continue;
+                }
+
+                var validationData = _stringParser.GetValidationData(line);
+
+                if (_validator.CheckIfPasswordValid(validationData))
+                {
+                    result.AddValidPassword(validationData.PasswordString);
+                }
+            }
+
+            return result;
         }
     }
 }
