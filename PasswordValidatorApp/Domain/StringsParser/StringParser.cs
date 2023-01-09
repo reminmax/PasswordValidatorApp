@@ -3,12 +3,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace PasswordValidatorApp.Domain.StringsParser
 {
     public class StringParser : IStringParser
     {
+        private readonly string _validationPattern;
+
+        public StringParser(string validationPattern)
+        {
+            _validationPattern = validationPattern;
+        }
+
         public ValidationData GetValidationData(string input)
         {
             throw new NotImplementedException();
@@ -16,7 +24,7 @@ namespace PasswordValidatorApp.Domain.StringsParser
 
         public bool IsStringMatchesPattern(string input)
         {
-            throw new NotImplementedException();
+            return Regex.IsMatch(input, _validationPattern);
         }
     }
 }
