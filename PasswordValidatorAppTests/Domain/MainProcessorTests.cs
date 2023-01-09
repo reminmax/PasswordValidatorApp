@@ -2,11 +2,6 @@
 using PasswordValidatorApp.Domain.Validator;
 using PasswordValidatorApp.Domain;
 using PasswordValidatorApp.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PasswordValidatorApp.Utils;
 using PasswordValidatorAppTests.Data.Repository;
 

@@ -1,12 +1,7 @@
 ﻿using PasswordValidatorApp.Data.Entities;
 using PasswordValidatorApp.Exceptions;
 using PasswordValidatorApp.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace PasswordValidatorApp.Domain.StringsParser
 {

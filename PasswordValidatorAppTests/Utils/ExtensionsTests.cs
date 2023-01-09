@@ -1,10 +1,5 @@
 ﻿using PasswordValidatorApp.Exceptions;
 using PasswordValidatorApp.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PasswordValidatorAppTests.Utils
 {
