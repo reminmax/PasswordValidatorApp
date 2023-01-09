@@ -1,5 +1,6 @@
 ﻿using CommandLine;
 using PasswordValidatorApp.CmdLineArgsParser;
+using PasswordValidatorApp.Data.Repository;
 
 namespace PasswordValidatorApp
 {
@@ -25,22 +26,17 @@ namespace PasswordValidatorApp
                 return;
             }
 
-            try
-            {
-                using (var reader = File.OpenText(fileName))
-                {
-                    var fileText = await reader.ReadToEndAsync();
+            var repository = new FileRepository(fileName);
 
-                    var stringArray = fileText.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-                    foreach (var item in stringArray)
-                    {
-                        Console.WriteLine(item);
-                    }
-                }
-            }
-            catch (Exception ex)
+            var stringCollection = await repository.GetDataForValidation();
+            if (!stringCollection.Any())
             {
-                Console.WriteLine(ex.ToString());
+                Console.WriteLine("Specified file is empty. There is nothing to validate.");
+            }
+
+            foreach (var line in stringCollection)
+            {
+                Console.WriteLine(line);
             }
         }
     }
