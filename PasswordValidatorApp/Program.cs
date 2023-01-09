@@ -1,6 +1,11 @@
 ﻿using CommandLine;
 using PasswordValidatorApp.CmdLineArgsParser;
 using PasswordValidatorApp.Data.Repository;
+using PasswordValidatorApp.Domain.StringsParser;
+using PasswordValidatorApp.Domain.Validator;
+using PasswordValidatorApp.Domain;
+using PasswordValidatorApp.Utils;
+using PasswordValidatorApp.Data.Entities;
 
 namespace PasswordValidatorApp
 {
@@ -13,7 +18,15 @@ namespace PasswordValidatorApp
                 .WithParsedAsync(async options => {
                     if (!string.IsNullOrEmpty(options.Filename))
                     {
-                        await RunValidation(options.Filename);
+                        try
+                        {
+                            await RunValidation(options.Filename);
+                        }
+                        catch (TaskCanceledException)
+                        {
+                            Console.WriteLine("Execution was canceled.");
+                            return;
+                        }
                     }
                 });
         }
@@ -26,18 +39,54 @@ namespace PasswordValidatorApp
                 return;
             }
 
-            var repository = new FileRepository(fileName);
+            Console.WriteLine("Validation process started.");
 
-            var stringCollection = await repository.GetDataForValidation();
-            if (!stringCollection.Any())
-            {
-                Console.WriteLine("Specified file is empty. There is nothing to validate.");
-            }
+            var mainProcessor = new MainProcessor(
+                new FileRepository(fileName),
+                new StringParser(
+                    validationPattern: Constants.VALIDATION_PATTERN,
+                    splitPattern: Constants.SPLIT_PATTERN
+                    ),
+                new PswValidator());
 
-            foreach (var line in stringCollection)
-            {
-                Console.WriteLine(line);
-            }
+            var result = await mainProcessor.GetValidationResult();
+
+            Console.WriteLine("Validation process finished.");
+
+            ShowValidationResult(result);
         }
+
+        private static void ShowValidationResult(ValidationResult result)
+        {
+            if (result.HasError)
+            {
+                Console.WriteLine("Errors occurred while processing the file:");
+                var errorCounter = 1;
+                foreach (var error in result.Errors)
+                {
+                    Console.WriteLine($" {errorCounter}. {error}");
+                    errorCounter++;
+                }
+            }
+            else
+            {
+                Console.WriteLine("Validation process completed successfully.");
+            }
+
+            if (!result.ValidPasswords.Any())
+            {
+                Console.WriteLine("No valid password found.");
+                return;
+            }
+
+            Console.WriteLine($"{result.ValidPasswords.Count} valid password(s) found:");
+            foreach (var password in result.ValidPasswords)
+            {
+                Console.WriteLine($" {password}");
+            }
+
+            Console.WriteLine("Thanks for using PswValidatorApp :)");
+        }
+
     }
 }
