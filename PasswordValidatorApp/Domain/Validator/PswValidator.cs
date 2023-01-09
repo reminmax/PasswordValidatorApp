@@ -11,7 +11,10 @@ namespace PasswordValidatorApp.Domain.Validator
     {
         public bool CheckIfPasswordValid(ValidationData validationData)
         {
-            throw new NotImplementedException();
+            var countChars = validationData.PasswordString.Count(t => t == validationData.SearchCharacter);
+
+            return countChars >= validationData.MinimumNumberOfOccurrences
+                && countChars <= validationData.MaximumNumberOfOccurrences;
         }
     }
 }
