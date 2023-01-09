@@ -1,4 +1,6 @@
 ﻿using PasswordValidatorApp.Domain.StringsParser;
+using PasswordValidatorApp.Exceptions;
+using PasswordValidatorApp.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,7 +13,7 @@ namespace PasswordValidatorAppTests.Domain.StringsParser
     [TestClass]
     public class StringParserTests
     {
-        private readonly StringParser stringParser = new StringParser();
+        private readonly StringParser stringParser = new StringParser(Constants.VALIDATION_PATTERN);
 
         [TestMethod]
         public void IsStringMatchesPattern_ReturnsTrue_ForValidString()
@@ -113,5 +115,35 @@ namespace PasswordValidatorAppTests.Domain.StringsParser
             Assert.IsFalse(result, "Invalid string. Value can't be empty.");
         }
 
+        [TestMethod]
+        public void GetValidationData()
+        {
+            var sourseString = "a 1-5: abcd";
+
+            var result = stringParser.GetValidationData(sourseString);
+
+            Assert.IsTrue(result.SearchCharacter == 'a', "SearchCharacter must be equal to the first symbol ot the source string");
+            Assert.IsTrue(result.MinimumNumberOfOccurrences == 1);
+            Assert.IsTrue(result.MaximumNumberOfOccurrences == 5);
+            Assert.IsTrue(result.PasswordString == "abcd");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ParsingException),
+            "Source string must not be empty.")]
+        public void GetValidationData_ThrowsAnException_ForEmptyString()
+        {
+            var sourseString = "";
+            stringParser.GetValidationData(sourseString);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ParsingException),
+            "Both digits should be provided.")]
+        public void GetValidationData_ThrowsAnException_ForMissingDigits()
+        {
+            var sourseString = "a -5: abcd";
+            stringParser.GetValidationData(sourseString);
+        }
     }
 }
