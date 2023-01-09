@@ -11,8 +11,17 @@ namespace PasswordValidatorApp
 {
     internal class Program
     {
+        private static readonly CancellationTokenSource cts = new CancellationTokenSource();
+        private static readonly CancellationToken cancellationToken = cts.Token;
+
         static async Task Main(string[] args)
         {
+            // Completion handling on click Ctrl+C
+            Console.CancelKeyPress += delegate (object? sender, ConsoleCancelEventArgs args) {
+                cts.Cancel();
+                args.Cancel = true;
+            };
+
             await Parser.Default
                 .ParseArguments<ValidateOptions>(args)
                 .WithParsedAsync(async options => {
@@ -20,7 +29,7 @@ namespace PasswordValidatorApp
                     {
                         try
                         {
-                            await RunValidation(options.Filename);
+                            await RunValidation(options.Filename, cancellationToken);
                         }
                         catch (TaskCanceledException)
                         {
@@ -31,7 +40,7 @@ namespace PasswordValidatorApp
                 });
         }
 
-        private static async Task RunValidation(string fileName)
+        private static async Task RunValidation(string fileName, CancellationToken token)
         {
             if (!File.Exists(fileName))
             {
@@ -41,8 +50,13 @@ namespace PasswordValidatorApp
 
             Console.WriteLine("Validation process started.");
 
+            if (token.IsCancellationRequested)
+            {
+                throw new TaskCanceledException();
+            }
+
             var mainProcessor = new MainProcessor(
-                new FileRepository(fileName),
+                new FileRepository(fileName, cancellationToken),
                 new StringParser(
                     validationPattern: Constants.VALIDATION_PATTERN,
                     splitPattern: Constants.SPLIT_PATTERN
