@@ -1,4 +1,4 @@
-# PasswordValidatorApp
+# PasswordValidatorApp (test task)
 
 Console application for validating passwords in batch mode.
 
